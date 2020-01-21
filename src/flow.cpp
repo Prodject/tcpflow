@@ -42,6 +42,7 @@ void flow::usage()
     std::cout << "  %K - (connection_number / 1000)       % 1000\n";
     std::cout << "  %M - (connection_number / 1000000)    % 1000\n";
     std::cout << "  %G - (connection_number / 1000000000) % 1000\n";
+    std::cout << "  %S - session ID\n";
     std::cout << "  %% - Output a '%'\n";
     std::cout << "\n";
     std::cout << "Default value is: '"<< flow::filename_template <<"'\n";
@@ -50,7 +51,7 @@ void flow::usage()
     std::cout << "      Filename template format handles '/' to create sub-directories.\n";
 }
 
-std::string flow::filename(uint32_t connection_count)
+std::string flow::filename(uint32_t connection_count, bool is_pcap)
 {
     std::stringstream ss;
 
@@ -135,6 +136,9 @@ std::string flow::filename(uint32_t connection_count)
 	    case 'c': // connection_count if connection_count >0
 		if(connection_count>0) ss << connection_count;
 		break;
+	    case 'S': // session ID
+		ss << std::setfill('0') << std::setw(20) << session_id;
+		break;
 	    case '#': // always output connection count
 		ss << connection_count;
 		break;
@@ -149,6 +153,9 @@ std::string flow::filename(uint32_t connection_count)
 	    if(buf[0]) ss << buf;
 	}
     }
+    if(is_pcap){
+        ss << ".pcap"; // file extension
+    }
     return ss.str();
 }
 
@@ -161,7 +168,7 @@ std::string flow::new_filename(int *fd,int flags,int mode)
 {
     /* Loop connection count until we find a file that doesn't exist */
     for(uint32_t connection_count=0;;connection_count++){
-        std::string nfn = filename(connection_count);
+        std::string nfn = filename(connection_count, false);
         if(nfn.find('/')!=std::string::npos) mkdirs_for_path(nfn.c_str());
         int nfd = tcpdemux::getInstance()->retrying_open(nfn,flags,mode);
         if(nfd>=0){
@@ -169,6 +176,17 @@ std::string flow::new_filename(int *fd,int flags,int mode)
             return nfn;
         }
         if(errno!=EEXIST) die("Cannot open: %s",nfn.c_str());
+    }
+    return std::string("<<CANNOT CREATE FILE>>");               // error; no file
+}
+
+std::string flow::new_pcap_filename()
+{
+    /* Loop connection count until we find a file that doesn't exist */
+    for(uint32_t connection_count=0;;connection_count++){
+        std::string nfn = filename(connection_count, true);
+        if(nfn.find('/')!=std::string::npos) mkdirs_for_path(nfn.c_str());
+        return nfn;
     }
     return std::string("<<CANNOT CREATE FILE>>");               // error; no file
 }

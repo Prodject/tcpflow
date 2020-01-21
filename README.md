@@ -1,10 +1,23 @@
 TCPFLOW 1.5.0
-===========
+=============
 Downloads directory: http://digitalcorpora.org/downloads/tcpflow/
 
+Installation
+------------
 
-Compiling
----------
+Most common GNU/Linux distributions ship tcpflow in their repositories. So on Debian/Ubuntu/etc you can say
+
+    sudo apt-get install tcpflow
+
+and on Fedora/RedHat/CentOS/etc you can say
+
+    sudo dnf install tcpflow
+
+And that's it. If this isn't good-enough for whatever reason, you can build from source:
+
+Building from source
+--------------------
+
 To compile for Linux
 
 Be sure you have the necessary precursors. There are files in the root directory that will do this for you, depending on your host operating system:
@@ -196,6 +209,10 @@ tcpflow currently does not understand IP fragments.  Flows containing
 IP fragments will not be recorded correctly. IP fragmentation is
 increasingly a rare event, so this does not seem to be a significant problem.
 
+RECOMMENDED CITATION
+====================
+If you are writing an article about tcpflow, please cite our technical report:
+* Passive TCP Reconstruction and Forensic Analysis with tcpflow, Simson Garfinkel and Michael Shick, Naval Postgraduate School Technical Report NPS-CS-13-003, September 2013. https://calhoun.nps.edu/handle/10945/36026
 
 MAINTAINER
 ==========
@@ -206,7 +223,7 @@ ACKNOWLEDGEMENTS
 Thanks to: 
 * Jeffrey Pang, for the radiotap implementation
 * Doug Madory, for the  Wifi parser
-* Jeremy Elson, for the Original idea and initial tcp/ip implementation
+* Jeremy Elson, for the original idea and initial tcp/ip implementation
 
 
 
